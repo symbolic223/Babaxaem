@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/Users/nyashka2007/Babaxaem/Babaxaem/Babaxaem.csproj": {}
+    "/Users/symbolic/RiderProjects/Babaxaem/Babaxaem/Babaxaem.csproj": {}
   },
   "projects": {
-    "/Users/nyashka2007/Babaxaem/Babaxaem/Babaxaem.csproj": {
+    "/Users/symbolic/RiderProjects/Babaxaem/Babaxaem/Babaxaem.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/nyashka2007/Babaxaem/Babaxaem/Babaxaem.csproj",
+        "projectUniqueName": "/Users/symbolic/RiderProjects/Babaxaem/Babaxaem/Babaxaem.csproj",
         "projectName": "Babaxaem",
-        "projectPath": "/Users/nyashka2007/Babaxaem/Babaxaem/Babaxaem.csproj",
-        "packagesPath": "/Users/nyashka2007/.nuget/packages/",
-        "outputPath": "/Users/nyashka2007/Babaxaem/Babaxaem/obj/",
+        "projectPath": "/Users/symbolic/RiderProjects/Babaxaem/Babaxaem/Babaxaem.csproj",
+        "packagesPath": "/Users/symbolic/.nuget/packages/",
+        "outputPath": "/Users/symbolic/RiderProjects/Babaxaem/Babaxaem/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/nyashka2007/.nuget/NuGet/NuGet.Config"
+          "/Users/symbolic/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
