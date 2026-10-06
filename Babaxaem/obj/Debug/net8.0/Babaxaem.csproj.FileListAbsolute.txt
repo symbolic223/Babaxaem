@@ -177,3 +177,4 @@
 /Users/symbolic/RiderProjects/Babaxaem/Babaxaem/obj/Debug/net8.0/rjsmcshtml.dswa.cache.json
 /Users/symbolic/RiderProjects/Babaxaem/Babaxaem/obj/Debug/net8.0/staticwebassets.build.json.cache
 /Users/symbolic/RiderProjects/Babaxaem/Babaxaem/obj/Debug/net8.0/swae.build.ex.cache
+/Users/symbolic/RiderProjects/Babaxaem/Babaxaem/obj/Debug/net8.0/Babaxaem.sourcelink.json
