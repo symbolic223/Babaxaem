@@ -16,7 +16,7 @@ docker compose version
 ## 1. Скачать проект
 
 ```bash
-git clone [<ССЫЛКА_НА_РЕПОЗИТОРИЙ>](https://github.com/symbolic223/Babaxaem)
+git clone https://github.com/symbolic223/Babaxaem
 ```
 
 Перейти в папку проекта:
