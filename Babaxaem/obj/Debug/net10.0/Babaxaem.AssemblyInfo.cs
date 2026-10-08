@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Babaxaem")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+078caa22bb9f8e6277525097a7a24b3a2ec8f301")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fb79ddf29c21160dd03f28750b8c5a472a024609")]
 [assembly: System.Reflection.AssemblyProductAttribute("Babaxaem")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Babaxaem")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
