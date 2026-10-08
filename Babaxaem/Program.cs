@@ -1,14 +1,31 @@
 using Babaxaem.Data;
 using Microsoft.EntityFrameworkCore;
+using Babaxaem.Data.Repositories;
+using Babaxaem.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite(
+    options.UseNpgsql(
         builder.Configuration.GetConnectionString("DefaultConnection")
     ));
+
+builder.Services.AddScoped<StudentRepository>();
+builder.Services.AddScoped<StudentService>();
+
+builder.Services.AddScoped<GroupRepository>();
+builder.Services.AddScoped<GroupService>();
+
+builder.Services.AddScoped<SubjectRepository>();
+builder.Services.AddScoped<SubjectService>();
+
+builder.Services.AddScoped<AttendanceRepository>();
+builder.Services.AddScoped<AttendanceService>();
+
+builder.Services.AddScoped<GradeRepository>();
+builder.Services.AddScoped<GradeService>();
 
 builder.Services.AddCors(options =>
 {
@@ -26,33 +43,16 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
 app.UseCors("AllowFrontEnd");
 
 app.UseAuthorization();
 
 app.MapControllers();
-
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-    if (!db.Groups.Any())
-    {
-        db.Groups.AddRange(
-            new Group { Name = "Д-9-15" },
-            new Group { Name = "Р-11-15" },
-            new Group { Name = "ИДР-11-16" }
-        );
-
-        db.Subjects.AddRange(
-            new Subject { Name = "Математика" },
-            new Subject { Name = "Информатика" },
-            new Subject { Name = "Компьютерная графика" },
-            new Subject { Name = "Технология печати" }
-        );
-
-        db.SaveChanges();
-    }
-}
 
 app.Run();

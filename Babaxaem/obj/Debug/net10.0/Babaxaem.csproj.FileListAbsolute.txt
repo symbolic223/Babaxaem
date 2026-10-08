@@ -296,3 +296,5 @@
 /Users/symbolic/RiderProjects/Babaxaem/Babaxaem/obj/Debug/net10.0/Babaxaem.pdb
 /Users/symbolic/RiderProjects/Babaxaem/Babaxaem/obj/Debug/net10.0/Babaxaem.genruntimeconfig.cache
 /Users/symbolic/RiderProjects/Babaxaem/Babaxaem/obj/Debug/net10.0/ref/Babaxaem.dll
+/Users/symbolic/RiderProjects/Babaxaem/Babaxaem/bin/Debug/net10.0/Npgsql.dll
+/Users/symbolic/RiderProjects/Babaxaem/Babaxaem/bin/Debug/net10.0/Npgsql.EntityFrameworkCore.PostgreSQL.dll

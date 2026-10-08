@@ -1,6 +1,5 @@
-using Babaxaem.Data;
+using Babaxaem.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Babaxaem.Controllers;
 
@@ -8,33 +7,60 @@ namespace Babaxaem.Controllers;
 [Route("api/groups")]
 public class GroupsController : ControllerBase
 {
-    private readonly AppDbContext _context;
+    private readonly GroupService _service;
 
-    public GroupsController(AppDbContext context)
+    public GroupsController(GroupService service)
     {
-        _context = context;
+        _service = service;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetGroups()
     {
-        var groups = await _context.Groups
-            .Select(g => new
-            {
-                id = g.Id,
-                name = g.Name
-            })
-            .ToListAsync();
+        var groups = await _service.GetGroupsAsync();
 
-        return Ok(groups);
+        return Ok(groups.Select(g => new
+        {
+            id = g.Id,
+            name = g.Name
+        }));
     }
 
     [HttpPost]
-    public async Task<IActionResult> AddGroup(Group group)
+    public async Task<IActionResult> AddGroup([FromBody] GroupRequest request)
     {
-        _context.Groups.Add(group);
-        await _context.SaveChangesAsync();
+        if (string.IsNullOrWhiteSpace(request.Name))
+        {
+            return BadRequest(new
+            {
+                error = "Не указано название группы"
+            });
+        }
 
-        return Ok(group);
+        var group = await _service.AddGroupAsync(request.Name);
+
+        return Ok(new
+        {
+            id = group.Id,
+            name = group.Name
+        });
     }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteGroup(int id)
+    {
+        var success = await _service.DeleteGroupAsync(id);
+
+        if (!success)
+        {
+            return NotFound();
+        }
+
+        return NoContent();
+    }
+}
+
+public class GroupRequest
+{
+    public string Name { get; set; } = "";
 }

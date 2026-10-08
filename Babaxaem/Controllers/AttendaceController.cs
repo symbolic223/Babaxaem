@@ -1,6 +1,5 @@
-using Babaxaem.Data;
+using Babaxaem.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Babaxaem.Controllers;
 
@@ -8,11 +7,11 @@ namespace Babaxaem.Controllers;
 [Route("api/attendance")]
 public class AttendanceController : ControllerBase
 {
-    private readonly AppDbContext _context;
+    private readonly AttendanceService _service;
 
-    public AttendanceController(AppDbContext context)
+    public AttendanceController(AttendanceService service)
     {
-        _context = context;
+        _service = service;
     }
 
     [HttpGet]
@@ -20,47 +19,23 @@ public class AttendanceController : ControllerBase
         [FromQuery] int groupId,
         [FromQuery] DateTime date)
     {
-        var result = await _context.Students
-            .Where(s => s.GroupId == groupId)
-            .Select(s => new
-            {
-                studentId = s.Id,
-                status = _context.Attendance
-                    .Where(a => a.StudentId == s.Id &&
-                                a.Date.Date == date.Date)
-                    .Select(a => a.Status)
-                    .FirstOrDefault() ?? "present"
-            })
-            .ToListAsync();
+        var result = await _service.GetAttendanceAsync(
+            groupId,
+            date
+        );
 
         return Ok(result);
     }
 
     [HttpPut]
-    public async Task<IActionResult> SetAttendance(AttendanceRequest request)
+    public async Task<IActionResult> SetAttendance(
+        [FromBody] AttendanceRequest request)
     {
-        var attendance = await _context.Attendance
-            .FirstOrDefaultAsync(a =>
-                a.StudentId == request.StudentId &&
-                a.Date.Date == request.Date.Date);
-
-        if (attendance == null)
-        {
-            attendance = new Attendance
-            {
-                StudentId = request.StudentId,
-                Date = request.Date.Date,
-                Status = request.Status
-            };
-
-            _context.Attendance.Add(attendance);
-        }
-        else
-        {
-            attendance.Status = request.Status;
-        }
-
-        await _context.SaveChangesAsync();
+        var attendance = await _service.SetAttendanceAsync(
+            request.StudentId,
+            request.Date,
+            request.Status
+        );
 
         return Ok(attendance);
     }
@@ -69,6 +44,8 @@ public class AttendanceController : ControllerBase
 public class AttendanceRequest
 {
     public int StudentId { get; set; }
+
     public DateTime Date { get; set; }
+
     public string Status { get; set; } = "present";
 }

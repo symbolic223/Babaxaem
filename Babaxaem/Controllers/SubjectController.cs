@@ -1,6 +1,5 @@
-using Babaxaem.Data;
+using Babaxaem.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Babaxaem.Controllers;
 
@@ -8,33 +7,60 @@ namespace Babaxaem.Controllers;
 [Route("api/subjects")]
 public class SubjectsController : ControllerBase
 {
-    private readonly AppDbContext _context;
+    private readonly SubjectService _service;
 
-    public SubjectsController(AppDbContext context)
+    public SubjectsController(SubjectService service)
     {
-        _context = context;
+        _service = service;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetSubjects()
     {
-        var subjects = await _context.Subjects
-            .Select(s => new
-            {
-                id = s.Id,
-                name = s.Name
-            })
-            .ToListAsync();
+        var subjects = await _service.GetSubjectsAsync();
 
-        return Ok(subjects);
+        return Ok(subjects.Select(s => new
+        {
+            id = s.Id,
+            name = s.Name
+        }));
     }
 
     [HttpPost]
-    public async Task<IActionResult> AddSubject(Subject subject)
+    public async Task<IActionResult> AddSubject([FromBody] SubjectRequest request)
     {
-        _context.Subjects.Add(subject);
-        await _context.SaveChangesAsync();
+        if (string.IsNullOrWhiteSpace(request.Name))
+        {
+            return BadRequest(new
+            {
+                error = "Не указано название предмета"
+            });
+        }
 
-        return Ok(subject);
+        var subject = await _service.AddSubjectAsync(request.Name);
+
+        return Ok(new
+        {
+            id = subject.Id,
+            name = subject.Name
+        });
     }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteSubject(int id)
+    {
+        var success = await _service.DeleteSubjectAsync(id);
+
+        if (!success)
+        {
+            return NotFound();
+        }
+
+        return NoContent();
+    }
+}
+
+public class SubjectRequest
+{
+    public string Name { get; set; } = "";
 }

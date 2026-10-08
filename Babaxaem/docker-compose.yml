@@ -1,0 +1,25 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: babaxaem-postgres
+    environment:
+      POSTGRES_DB: babaxaem
+      POSTGRES_USER: symbolic
+      POSTGRES_PASSWORD: symbolic123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  api:
+    build: .
+    container_name: babaxaem-api
+    depends_on:
+      - postgres
+    environment:
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=babaxaem;Username=symbolic;Password=symbolic123"
+    ports:
+      - "5084:8080"
+
+volumes:
+  postgres_data:

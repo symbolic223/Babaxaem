@@ -1,6 +1,6 @@
-using Babaxaem.Data;
+using Babaxaem.Models;
+using Babaxaem.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Babaxaem.Controllers;
 
@@ -8,94 +8,59 @@ namespace Babaxaem.Controllers;
 [Route("api/students")]
 public class StudentsController : ControllerBase
 {
-    private readonly AppDbContext _context;
+    private readonly StudentService _service;
 
-    public StudentsController(AppDbContext context)
+    public StudentsController(StudentService service)
     {
-        _context = context;
+        _service = service;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetStudents([FromQuery] int? groupId)
     {
-        var query = _context.Students.AsQueryable();
+        var students = await _service.GetStudentsAsync(groupId);
 
-        if (groupId.HasValue)
+        return Ok(students.Select(s => new
         {
-            query = query.Where(s => s.GroupId == groupId.Value);
-        }
-
-        var students = await query
-            .Select(s => new
-            {
-                id = s.Id,
-                fullName = s.FullName,
-                groupId = s.GroupId
-            })
-            .ToListAsync();
-
-        return Ok(students);
+            id = s.Id,
+            fullName = s.FullName,
+            groupId = s.GroupId
+        }));
     }
 
     [HttpPost]
     public async Task<IActionResult> AddStudent([FromBody] StudentRequest request)
     {
-        if (string.IsNullOrWhiteSpace(request.FullName))
+        var result = await _service.AddStudentAsync(
+            request.FullName,
+            request.GroupId
+        );
+
+        if (!result.Success)
         {
             return BadRequest(new
             {
-                error = "Не указано ФИО студента"
+                error = result.Error
             });
         }
-
-        if (request.GroupId <= 0)
-        {
-            return BadRequest(new
-            {
-                error = "Не указана группа"
-            });
-        }
-
-        var groupExists = await _context.Groups
-            .AnyAsync(g => g.Id == request.GroupId);
-
-        if (!groupExists)
-        {
-            return BadRequest(new
-            {
-                error = $"Группа с ID {request.GroupId} не существует"
-            });
-        }
-
-        var student = new Student
-        {
-            FullName = request.FullName,
-            GroupId = request.GroupId
-        };
-
-        _context.Students.Add(student);
-        await _context.SaveChangesAsync();
 
         return Ok(new
         {
-            id = student.Id,
-            fullName = student.FullName,
-            groupId = student.GroupId
+            id = result.Student!.Id,
+            fullName = result.Student.FullName,
+            groupId = result.Student.GroupId
         });
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteStudent(int id)
     {
-        var student = await _context.Students.FindAsync(id);
+        var success = await _service.DeleteStudentAsync(id);
 
-        if (student == null)
+        if (!success)
         {
             return NotFound();
         }
-
-        _context.Students.Remove(student);
-        await _context.SaveChangesAsync();
 
         return NoContent();
     }
