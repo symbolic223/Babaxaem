@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace Babaxaem.Models;
 
 public class Subject
@@ -6,5 +8,6 @@ public class Subject
 
     public string Name { get; set; } = "";
 
+    [JsonIgnore]
     public ICollection<Grade> Grades { get; set; } = new List<Grade>();
 }

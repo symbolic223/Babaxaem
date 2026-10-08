@@ -1,9 +1,12 @@
+using System.Text.Json.Serialization;
+
 namespace Babaxaem.Models;
 
 public class Attendance
 {
     public int StudentId { get; set; }
 
+    [JsonIgnore]
     public Student Student { get; set; } = null!;
 
     public DateTime Date { get; set; }

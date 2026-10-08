@@ -21,10 +21,14 @@ public class AttendanceRepository
 
     public async Task<Attendance?> GetAsync(int studentId, DateTime date)
     {
+        var start = DateTime.SpecifyKind(date.Date, DateTimeKind.Utc);
+        var end = start.AddDays(1);
+
         return await _context.Attendance
             .FirstOrDefaultAsync(a =>
                 a.StudentId == studentId &&
-                a.Date.Date == date.Date);
+                a.Date >= start &&
+                a.Date < end);
     }
 
     public async Task<Attendance> AddAsync(Attendance attendance)

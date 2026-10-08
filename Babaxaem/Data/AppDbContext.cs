@@ -23,6 +23,15 @@ public class AppDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        
+        modelBuilder.Entity<Subject>().HasData(
+            new Subject { Id = 1, Name = "Теория вероятностей" },
+            new Subject { Id = 2, Name = "Граф. дизайн и мультимедиа" },
+            new Subject { Id = 3, Name = "Проектирование и разработка ИП" },
+            new Subject { Id = 4, Name = "Компьютерные сети" },
+            new Subject { Id = 5, Name = "Разработка кода ИС" },
+            new Subject { Id = 6, Name = "Английский язык" }
+        );
 
         modelBuilder.Entity<Group>()
             .HasKey(g => g.Id);

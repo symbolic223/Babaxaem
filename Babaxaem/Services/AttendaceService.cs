@@ -12,26 +12,29 @@ public class AttendanceService
         _repository = repository;
     }
 
-    public async Task<List<AttendanceResult>> GetAttendanceAsync(
-        int groupId,
-        DateTime date)
+    public async Task<List<Attendance>> GetAttendanceAsync(int groupId, DateTime date)
     {
         var students = await _repository.GetStudentsByGroupAsync(groupId);
 
-        var result = new List<AttendanceResult>();
+        var result = new List<Attendance>();
 
         foreach (var student in students)
         {
-            var attendance = await _repository.GetAsync(
-                student.Id,
-                date
-            );
+            var attendance = await _repository.GetAsync(student.Id, date);
 
-            result.Add(new AttendanceResult
+            if (attendance != null)
             {
-                StudentId = student.Id,
-                Status = attendance?.Status ?? "present"
-            });
+                result.Add(attendance);
+            }
+            else
+            {
+                result.Add(new Attendance
+                {
+                    StudentId = student.Id,
+                    Date = DateTime.SpecifyKind(date.Date, DateTimeKind.Utc),
+                    Status = "absent"
+                });
+            }
         }
 
         return result;
@@ -42,34 +45,26 @@ public class AttendanceService
         DateTime date,
         string status)
     {
-        var attendance = await _repository.GetAsync(
-            studentId,
-            date
-        );
+        date = DateTime.SpecifyKind(date.Date, DateTimeKind.Utc);
 
-        if (attendance == null)
+        var existing = await _repository.GetAsync(studentId, date);
+
+        if (existing != null)
         {
-            attendance = new Attendance
-            {
-                StudentId = studentId,
-                Date = date.Date,
-                Status = status
-            };
+            existing.Status = status;
 
-            return await _repository.AddAsync(attendance);
+            await _repository.UpdateAsync(existing);
+
+            return existing;
         }
 
-        attendance.Status = status;
+        var attendance = new Attendance
+        {
+            StudentId = studentId,
+            Date = date,
+            Status = status
+        };
 
-        await _repository.UpdateAsync(attendance);
-
-        return attendance;
+        return await _repository.AddAsync(attendance);
     }
-}
-
-public class AttendanceResult
-{
-    public int StudentId { get; set; }
-
-    public string Status { get; set; } = "";
 }
